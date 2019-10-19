@@ -5,17 +5,25 @@ const Schema = use('Schema')
 
 class IssueSchema extends Schema {
   up () {
-    this.create('issues', table => {
-      table.string('issue').notNullable()
+    this.create('alerts', table => {
       table.string('description').notNullable()
-      table.string('location')
+      table.string('location').notNullable()
+
+      table
+        .integer('issue_id')
+        .unsigned()
+        .references('id')
+        .inTable('issues')
+        .onUpdate('CASCADE')
+        .onDelete('SET NULL')
+
       table.increments()
       table.timestamps()
     })
   }
 
   down () {
-    this.drop('issues')
+    this.drop('alert')
   }
 }
 

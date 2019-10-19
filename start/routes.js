@@ -3,10 +3,10 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.resource('issues', 'IssueController')
+Route.resource('alerts', 'AlertController')
   .apiOnly()
   .validator(
-    new Map([[['issues.store'], ['Issue']], [['issues.update'], ['Issue']]])
+    new Map([[['alerts.store'], ['Alert']], [['alerts.update'], ['Alert']]])
   )
 
 Route.resource('users', 'UserController')

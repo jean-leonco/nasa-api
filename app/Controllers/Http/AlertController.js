@@ -1,29 +1,33 @@
 'use strict'
 
-const Issue = use('App/Models/Issue')
+const Alert = use('App/Models/Alert')
 
 class IssueController {
   async index ({ request }) {
     const { page } = request.get()
 
-    const issues = await Issue.query().paginate(page)
+    const alerts = await Alert.query()
+      .with('issue')
+      .paginate(page)
 
-    return issues
+    return alerts
   }
 
   async store ({ request }) {
     const data = request.all()
 
-    const issue = await Issue.create(data)
+    const alert = await Alert.create(data)
 
-    return issue
+    return alert
   }
 
   async show ({ params, response }) {
     try {
-      const issue = await Issue.findOrFail(params.id)
+      const alert = await Alert.findOrFail(params.id)
 
-      return issue
+      await alert.load('issue')
+
+      return alert
     } catch (error) {
       return response.status(error.status).send({
         error: {
@@ -35,15 +39,15 @@ class IssueController {
 
   async update ({ request, params, response }) {
     try {
-      const issue = await Issue.findOrFail(params.id)
+      const alert = await Alert.findOrFail(params.id)
 
-      const data = request.only(['issue', 'title'])
+      const data = request.only(['description', 'location'])
 
-      issue.merge(data)
+      alert.merge(data)
 
-      await issue.save()
+      await alert.save()
 
-      return issue
+      return alert
     } catch (error) {
       return response.status(error.status).send({
         error: {
@@ -55,9 +59,9 @@ class IssueController {
 
   async destroy ({ params, response }) {
     try {
-      const issue = await Issue.findOrFail(params.id)
+      const alert = await Alert.findOrFail(params.id)
 
-      issue.delete()
+      alert.delete()
 
       return response.send({
         sucess: { message: 'Alerta foi deletado' }
