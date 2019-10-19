@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const Model = use('Model');
+const Model = use('Model')
 
 class Issue extends Model {}
 
-module.exports = Issue;
+module.exports = Issue

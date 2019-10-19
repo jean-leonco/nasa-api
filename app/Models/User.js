@@ -1,18 +1,7 @@
-'use strict';
+'use strict'
 
-const Model = use('Model');
-const Hash = use('Hash');
+const Model = use('Model')
 
-class User extends Model {
-  static boot() {
-    super.boot();
+class User extends Model {}
 
-    this.addHook('beforeSave', async userInstance => {
-      if (userInstance.dirty.password) {
-        userInstance.password = await Hash.make(userInstance.password);
-      }
-    });
-  }
-}
-
-module.exports = User;
+module.exports = User

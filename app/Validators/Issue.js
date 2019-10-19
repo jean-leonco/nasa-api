@@ -1,23 +1,27 @@
-'use strict';
+'use strict'
 
 class Issue {
-  get validateAll() {
-    return true;
+  get validateAll () {
+    return true
   }
 
-  get rules() {
+  get rules () {
     return {
       issue: 'required',
-      description: 'required',
-    };
+      description: 'required'
+    }
   }
 
-  get messages() {
+  get messages () {
     return {
       'issue.required': 'É preciso informar o alerta',
-      'description.required': 'É preciso informar uma descrição',
-    };
+      'description.required': 'É preciso informar uma descrição'
+    }
+  }
+
+  async fails (errorMessages) {
+    return this.ctx.response.send(errorMessages)
   }
 }
 
-module.exports = Issue;
+module.exports = Issue
