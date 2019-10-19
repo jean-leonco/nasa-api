@@ -1,10 +1,6 @@
 'use strict'
 
 class Issue {
-  get validateAll () {
-    return true
-  }
-
   get rules () {
     return {
       issue: 'required',
