@@ -15,3 +15,5 @@ Route.resource('users', 'UserController')
   )
 
 Route.post('hooks', 'HookController.store')
+
+Route.post('issues', 'IssueController.store')
