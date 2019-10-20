@@ -1,6 +1,5 @@
 'use strict'
 
-/** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
 Route.resource('alerts', 'AlertController')
@@ -14,3 +13,5 @@ Route.resource('users', 'UserController')
   .validator(
     new Map([[['users.store'], ['User']], [['users.update'], ['User']]])
   )
+
+Route.post('hooks', 'HookController.store')
