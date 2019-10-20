@@ -5,14 +5,16 @@ class HookController {
   async store ({ request }) {
     const data = request.input(['data'])
 
-    const { isFromMe, text } = data
+    const { isFromMe, text, data: dataNumber } = data
 
-    if (isFromMe || !text) return
+    const { number } = dataNumber
+
+    if (isFromMe || !text || !number) return
 
     await whatsApi.post('messages', {
-      number: 554188231899,
+      number,
       serviceId: process.env.SERVICE_ID,
-      text: 'eai irmão'
+      text
     })
   }
 }
