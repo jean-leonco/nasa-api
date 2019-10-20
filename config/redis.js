@@ -12,6 +12,9 @@
 
 const Env = use('Env')
 
+const Url = require('url-parse')
+const REDIS_URL = new Url(Env.get('REDIS_URL'))
+
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -21,7 +24,7 @@ module.exports = {
   | Redis connection to be used by default.
   |
   */
-  connection: Env.get('REDIS_CONNECTION', 'local'),
+  connection: Env.get('REDIS_URL', 'local'),
 
   /*
   |--------------------------------------------------------------------------
@@ -32,9 +35,9 @@ module.exports = {
   |
   */
   local: {
-    host: '127.0.0.1',
-    port: 6379,
-    password: null,
+    host: REDIS_URL.hostname,
+    port: REDIS_URL.port,
+    password: REDIS_URL.password,
     db: 0,
     keyPrefix: ''
   },
@@ -48,17 +51,19 @@ module.exports = {
   |
   */
   cluster: {
-    clusters: [{
-      host: '127.0.0.1',
-      port: 6379,
-      password: null,
-      db: 0
-    },
-    {
-      host: '127.0.0.1',
-      port: 6380,
-      password: null,
-      db: 0
-    }]
+    clusters: [
+      {
+        host: REDIS_URL.hostname,
+        port: REDIS_URL.port,
+        password: REDIS_URL.password,
+        db: 0
+      },
+      {
+        host: REDIS_URL.hostname,
+        port: REDIS_URL.port,
+        password: REDIS_URL.password,
+        db: 0
+      }
+    ]
   }
 }
