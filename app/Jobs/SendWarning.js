@@ -1,6 +1,6 @@
 'use strict'
 
-const whatsApi = require('../../config/axios')
+const whatsApi = require('../../config/whatsApi')
 
 class SendWarning {
   static get concurrency () {

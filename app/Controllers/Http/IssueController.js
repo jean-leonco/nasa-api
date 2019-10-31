@@ -3,7 +3,7 @@
 const Issue = use('App/Models/Issue')
 
 class IssueController {
-  async store({ request, response }) {
+  async store ({ request, response }) {
     try {
       const data = request.only(['name', 'description'])
 

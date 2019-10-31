@@ -3,7 +3,7 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
-class IssueSchema extends Schema {
+class AlertSchema extends Schema {
   up () {
     this.create('alerts', table => {
       table.string('description').notNullable()
@@ -23,8 +23,8 @@ class IssueSchema extends Schema {
   }
 
   down () {
-    this.drop('alert')
+    this.drop('alerts')
   }
 }
 
-module.exports = IssueSchema
+module.exports = AlertSchema

@@ -12,7 +12,11 @@ class UserSchema extends Schema {
         .string('number')
         .notNullable()
         .unique()
-      table.string('address')
+
+      table.string('cep').notNullable()
+      table.string('region')
+      table.string('full_address')
+
       table.timestamps()
     })
   }
