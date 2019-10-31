@@ -19,9 +19,7 @@ class UserController {
       return user
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
       })
     }
   }
@@ -33,9 +31,7 @@ class UserController {
 
     if (message) {
       return response.status(400).send({
-        error: {
-          message
-        }
+        error: message
       })
     }
 
@@ -57,9 +53,7 @@ class UserController {
 
         if (isUser) {
           return response.status(401).send({
-            error: {
-              message: 'O número já está associado com outra pessoa'
-            }
+            error: 'O número já está associado com outra pessoa'
           })
         }
       }
@@ -69,9 +63,7 @@ class UserController {
 
         if (message) {
           return response.status(400).send({
-            error: {
-              message
-            }
+            error: message
           })
         }
 
@@ -86,9 +78,7 @@ class UserController {
       return user
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
       })
     }
   }
@@ -104,9 +94,7 @@ class UserController {
       })
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o usuário'
       })
     }
   }

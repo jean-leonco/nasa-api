@@ -18,9 +18,7 @@ class IssueController {
       return issue
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o problema'
       })
     }
   }
@@ -50,9 +48,7 @@ class IssueController {
       return issue
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o problema'
       })
     }
   }
@@ -68,9 +64,7 @@ class IssueController {
       })
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o problema'
       })
     }
   }

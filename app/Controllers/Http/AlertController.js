@@ -25,9 +25,7 @@ class AlertController {
 
       if (message) {
         return response.status(400).send({
-          error: {
-            message
-          }
+          error: message
         })
       }
 
@@ -40,9 +38,7 @@ class AlertController {
       return alert
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o problema'
       })
     }
   }
@@ -56,9 +52,7 @@ class AlertController {
       return alert
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
       })
     }
   }
@@ -77,9 +71,7 @@ class AlertController {
 
       if (message) {
         return response.status(400).send({
-          error: {
-            message
-          }
+          error: message
         })
       }
 
@@ -90,11 +82,9 @@ class AlertController {
       return alert
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: error.message.includes('Alert')
-            ? 'Alguma coisa deu errado, não pudemos encontrar o alerta'
-            : 'Alguma coisa deu errado, não pudemos encontrar o problema'
-        }
+        error: error.message.includes('Alert')
+          ? 'Alguma coisa deu errado, não pudemos encontrar o alerta'
+          : 'Alguma coisa deu errado, não pudemos encontrar o problema'
       })
     }
   }
@@ -110,9 +100,7 @@ class AlertController {
       })
     } catch (error) {
       return response.status(error.status).send({
-        error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
-        }
+        error: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
       })
     }
   }
