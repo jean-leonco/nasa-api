@@ -7,7 +7,7 @@ class AlertSchema extends Schema {
   up () {
     this.create('alerts', table => {
       table.string('description').notNullable()
-      table.string('location').notNullable()
+      table.string('region').notNullable()
 
       table
         .integer('issue_id')

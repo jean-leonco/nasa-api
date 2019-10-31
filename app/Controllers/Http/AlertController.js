@@ -1,6 +1,8 @@
 'use strict'
 
 const Alert = use('App/Models/Alert')
+const Issue = use('App/Models/Issue')
+const cepApi = require('../../../config/cepApi')
 
 class IssueController {
   async index ({ request }) {
@@ -13,12 +15,46 @@ class IssueController {
     return alerts
   }
 
-  async store ({ request }) {
-    const data = request.all()
+  async store ({ request, response }) {
+    try {
+      const { issue_id, description, cep } = request.all()
 
-    const alert = await Alert.create(data)
+      await Issue.findOrFail(issue_id)
 
-    return alert
+      const { error, data } = await cepApi.get(`/${cep}/json`)
+
+      if (error) {
+        return response.status(400).send({
+          error: {
+            message: 'Alguma coisa deu errado, não pudemos encontrar o endereço'
+          }
+        })
+      }
+
+      const { localidade, bairro } = data
+
+      if (localidade.toLowerCase() !== 'curitiba') {
+        return response.status(400).send({
+          error: {
+            message: 'O serviço só está funcionando em Curitiba'
+          }
+        })
+      }
+
+      const alert = await Alert.create({
+        issue_id,
+        description,
+        region: bairro
+      })
+
+      return alert
+    } catch (error) {
+      return response.status(error.status).send({
+        error: {
+          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
+        }
+      })
+    }
   }
 
   async show ({ params, response }) {
@@ -41,9 +77,29 @@ class IssueController {
     try {
       const alert = await Alert.findOrFail(params.id)
 
-      const data = request.only(['description', 'location'])
+      const { issue_id, description, cep } = request.all()
 
-      alert.merge(data)
+      const { error, data } = await cepApi.get(`/${cep}/json`)
+
+      if (error) {
+        return response.status(400).send({
+          error: {
+            message: 'Alguma coisa deu errado, não pudemos encontrar o endereço'
+          }
+        })
+      }
+
+      const { localidade, bairro } = data
+
+      if (localidade.toLowerCase() !== 'curitiba') {
+        return response.status(400).send({
+          error: {
+            message: 'O serviço só está funcionando em Curitiba'
+          }
+        })
+      }
+
+      alert.merge({ issue_id, description, region: bairro })
 
       await alert.save()
 
