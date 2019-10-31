@@ -14,4 +14,4 @@ Route.resource('users', 'UserController')
 
 Route.post('hooks', 'HookController.store')
 
-Route.post('issues', 'IssueController.store')
+Route.resource('issues', 'IssueController').apiOnly()
