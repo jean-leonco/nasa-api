@@ -2,9 +2,9 @@
 
 const Alert = use('App/Models/Alert')
 const Issue = use('App/Models/Issue')
-const cepApi = require('../../../config/cepApi')
+const checkCep = require('../../Util/checkCep')
 
-class IssueController {
+class AlertController {
   async index ({ request }) {
     const { page } = request.get()
 
@@ -21,22 +21,12 @@ class IssueController {
 
       await Issue.findOrFail(issue_id)
 
-      const { error, data } = await cepApi.get(`/${cep}/json`)
+      const { message, region } = await checkCep(cep)
 
-      if (error) {
+      if (message) {
         return response.status(400).send({
           error: {
-            message: 'Alguma coisa deu errado, não pudemos encontrar o endereço'
-          }
-        })
-      }
-
-      const { localidade, bairro } = data
-
-      if (localidade.toLowerCase() !== 'curitiba') {
-        return response.status(400).send({
-          error: {
-            message: 'O serviço só está funcionando em Curitiba'
+            message
           }
         })
       }
@@ -44,7 +34,7 @@ class IssueController {
       const alert = await Alert.create({
         issue_id,
         description,
-        region: bairro
+        region
       })
 
       return alert
@@ -79,27 +69,21 @@ class IssueController {
 
       const { issue_id, description, cep } = request.all()
 
-      const { error, data } = await cepApi.get(`/${cep}/json`)
+      if (issue_id !== alert.issue_id) {
+        await Issue.findOrFail(issue_id)
+      }
 
-      if (error) {
+      const { message, region } = await checkCep(cep)
+
+      if (message) {
         return response.status(400).send({
           error: {
-            message: 'Alguma coisa deu errado, não pudemos encontrar o endereço'
+            message
           }
         })
       }
 
-      const { localidade, bairro } = data
-
-      if (localidade.toLowerCase() !== 'curitiba') {
-        return response.status(400).send({
-          error: {
-            message: 'O serviço só está funcionando em Curitiba'
-          }
-        })
-      }
-
-      alert.merge({ issue_id, description, region: bairro })
+      alert.merge({ issue_id, description, region })
 
       await alert.save()
 
@@ -107,7 +91,9 @@ class IssueController {
     } catch (error) {
       return response.status(error.status).send({
         error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
+          message: error.message.includes('Alert')
+            ? 'Alguma coisa deu errado, não pudemos encontrar o alerta'
+            : 'Alguma coisa deu errado, não pudemos encontrar o problema'
         }
       })
     }
@@ -132,4 +118,4 @@ class IssueController {
   }
 }
 
-module.exports = IssueController
+module.exports = AlertController

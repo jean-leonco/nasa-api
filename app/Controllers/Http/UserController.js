@@ -1,7 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
-const cepApi = require('../../../config/cepApi')
+const checkCep = require('../../Util/checkCep')
 
 class UserController {
   async index ({ request, response }) {
@@ -29,35 +29,19 @@ class UserController {
   async store ({ request, response }) {
     const { name, number, cep } = request.only(['name', 'number', 'cep'])
 
-    const user = new User()
-    user.name = name
-    user.number = number
-    user.cep = cep
+    const { message, region, full_address } = await checkCep(cep)
 
-    const { error, data } = await cepApi.get(`/${cep}/json`)
-
-    if (error) {
+    if (message) {
       return response.status(400).send({
         error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o endereço'
+          message
         }
       })
     }
 
-    const { localidade, bairro, logradouro } = data
+    const data = { name, number, cep, region, full_address }
 
-    if (localidade.toLowerCase() !== 'curitiba') {
-      return response.status(400).send({
-        error: {
-          message: 'O serviço só está funcionando em Curitiba'
-        }
-      })
-    }
-
-    user.region = bairro
-    user.full_address = logradouro
-
-    await user.save()
+    const user = await User.create(data)
 
     return user
   }
@@ -81,29 +65,18 @@ class UserController {
       }
 
       if (data.cep !== user.cep) {
-        const { error, data: cepData } = await cepApi.get(`/${data.cep}/json`)
+        const { message, region, full_address } = await checkCep(data.cep)
 
-        if (error) {
+        if (message) {
           return response.status(400).send({
             error: {
-              message:
-                'Alguma coisa deu errado, não pudemos encontrar o endereço'
+              message
             }
           })
         }
 
-        const { localidade, bairro, logradouro } = cepData
-
-        if (localidade.toLowerCase() !== 'curitiba') {
-          return response.status(400).send({
-            error: {
-              message: 'O serviço só está funcionando em Curitiba'
-            }
-          })
-        }
-
-        data.region = bairro
-        data.full_address = logradouro
+        data.region = region
+        data.full_address = full_address
       }
 
       user.merge(data)
