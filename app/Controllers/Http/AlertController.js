@@ -1,8 +1,10 @@
 'use strict'
 
 const Alert = use('App/Models/Alert')
+const Issue = use('App/Models/Issue')
+const checkCep = require('../../Util/checkCep')
 
-class IssueController {
+class AlertController {
   async index ({ request }) {
     const { page } = request.get()
 
@@ -13,12 +15,36 @@ class IssueController {
     return alerts
   }
 
-  async store ({ request }) {
-    const data = request.all()
+  async store ({ request, response }) {
+    try {
+      const { issue_id, description, cep } = request.all()
 
-    const alert = await Alert.create(data)
+      await Issue.findOrFail(issue_id)
 
-    return alert
+      const { message, region } = await checkCep(cep)
+
+      if (message) {
+        return response.status(400).send({
+          error: {
+            message
+          }
+        })
+      }
+
+      const alert = await Alert.create({
+        issue_id,
+        description,
+        region
+      })
+
+      return alert
+    } catch (error) {
+      return response.status(error.status).send({
+        error: {
+          message: 'Alguma coisa deu errado, não pudemos encontrar o problema'
+        }
+      })
+    }
   }
 
   async show ({ params, response }) {
@@ -41,9 +67,23 @@ class IssueController {
     try {
       const alert = await Alert.findOrFail(params.id)
 
-      const data = request.only(['description', 'location'])
+      const { issue_id, description, cep } = request.all()
 
-      alert.merge(data)
+      if (issue_id !== alert.issue_id) {
+        await Issue.findOrFail(issue_id)
+      }
+
+      const { message, region } = await checkCep(cep)
+
+      if (message) {
+        return response.status(400).send({
+          error: {
+            message
+          }
+        })
+      }
+
+      alert.merge({ issue_id, description, region })
 
       await alert.save()
 
@@ -51,7 +91,9 @@ class IssueController {
     } catch (error) {
       return response.status(error.status).send({
         error: {
-          message: 'Alguma coisa deu errado, não pudemos encontrar o alerta'
+          message: error.message.includes('Alert')
+            ? 'Alguma coisa deu errado, não pudemos encontrar o alerta'
+            : 'Alguma coisa deu errado, não pudemos encontrar o problema'
         }
       })
     }
@@ -76,4 +118,4 @@ class IssueController {
   }
 }
 
-module.exports = IssueController
+module.exports = AlertController

@@ -6,7 +6,7 @@ class Alert extends Model {
   static boot () {
     super.boot()
 
-    this.addHook('afterCreate', 'AlertHook.sendWarning')
+    // this.addHook('afterCreate', 'AlertHook.sendWarning')
   }
 
   issue () {

@@ -10,10 +10,8 @@ Route.resource('alerts', 'AlertController')
 
 Route.resource('users', 'UserController')
   .apiOnly()
-  .validator(
-    new Map([[['users.store'], ['User']], [['users.update'], ['User']]])
-  )
+  .validator(new Map([[['users.store'], ['User']]]))
 
 Route.post('hooks', 'HookController.store')
 
-Route.post('issues', 'IssueController.store')
+Route.resource('issues', 'IssueController').apiOnly()

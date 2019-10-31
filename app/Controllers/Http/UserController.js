@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
+const checkCep = require('../../Util/checkCep')
 
 class UserController {
   async index ({ request, response }) {
@@ -26,7 +27,19 @@ class UserController {
   }
 
   async store ({ request, response }) {
-    const data = request.only(['name', 'number', 'address'])
+    const { name, number, cep } = request.only(['name', 'number', 'cep'])
+
+    const { message, region, full_address } = await checkCep(cep)
+
+    if (message) {
+      return response.status(400).send({
+        error: {
+          message
+        }
+      })
+    }
+
+    const data = { name, number, cep, region, full_address }
 
     const user = await User.create(data)
 
@@ -37,7 +50,34 @@ class UserController {
     try {
       const user = await User.findOrFail(params.id)
 
-      const data = request.only(['name', 'number', 'address'])
+      const data = request.only(['name', 'number', 'cep'])
+
+      if (data.number !== user.number) {
+        const isUser = await User.findBy('number', data.number)
+
+        if (isUser) {
+          return response.status(401).send({
+            error: {
+              message: 'O número já está associado com outra pessoa'
+            }
+          })
+        }
+      }
+
+      if (data.cep !== user.cep) {
+        const { message, region, full_address } = await checkCep(data.cep)
+
+        if (message) {
+          return response.status(400).send({
+            error: {
+              message
+            }
+          })
+        }
+
+        data.region = region
+        data.full_address = full_address
+      }
 
       user.merge(data)
 
@@ -53,7 +93,7 @@ class UserController {
     }
   }
 
-  async destroy ({ request, params, response }) {
+  async destroy ({ params, response }) {
     try {
       const user = await User.findOrFail(params.id)
 
