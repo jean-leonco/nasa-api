@@ -29,7 +29,7 @@
     "adonis-kue": "^5.0.1",
     "axios": "^0.19.0",
     "pg": "^7.12.1",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.8"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
